@@ -122,21 +122,38 @@ console.log("token",token)
         </table>
       </div>
       {view && (
-        <div>
-          <h1>Attendance Details</h1>
-          <ul>
-            {attendanceRecords.length > 0 ? (
-              attendanceRecords.map((record, index) => (
-                <li key={index}>
-                  <strong>Date:</strong> {record.date}, <strong>Status:</strong> {record.attendence}
-                </li>
-              ))
-            ) : (
-              <p>No attendance records available.</p>
-            )}
-          </ul>
-        </div>
-      )}
+  <div className="p-6 bg-white shadow-md rounded-lg">
+    <h1 className="text-2xl font-bold mb-4">Attendance Details</h1>
+    {attendanceRecords.length > 0 ? (
+      <table className="min-w-full table-auto border-collapse border border-gray-300">
+        <thead className="bg-gray-100">
+          <tr>
+            <th className="border border-gray-300 px-4 py-2 text-left">#</th>
+            <th className="border border-gray-300 px-4 py-2 text-left">Date</th>
+            <th className="border border-gray-300 px-4 py-2 text-left">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {attendanceRecords.map((record, index) => (
+            <tr
+              key={index}
+              className={`${
+                record.attendence === 'Absent' ? 'bg-red-100' : 'bg-green-100'
+              } hover:bg-gray-200`}
+            >
+              <td className="border border-gray-300 px-4 py-2">{index + 1}</td>
+              <td className="border border-gray-300 px-4 py-2">{record.date}</td>
+              <td className="border border-gray-300 px-4 py-2">{record.attendence}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    ) : (
+      <p className="text-gray-600">No attendance records available.</p>
+    )}
+  </div>
+)}
+
       <div className="flex justify-end item-center w-100 flex-wrap">
         <button onClick={handleAttendence} className='border rounded-md bg-green-500 p-3 w-50 mt-20 text-xl'>Save</button>
       </div>

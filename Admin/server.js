@@ -7,6 +7,7 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import { Acount } from './Controllers/mogoose_Setup.js';
 import { Attendence } from './Controllers/attendence Setup.js';
+import SendLeave from  './Module/Leaveapi.js'
 const app = express();
 const port = 3000;
 const JWT_SECRET = "your_jwt_secret_key"; // Replace with a strong secret key
@@ -190,7 +191,7 @@ app.post('/seeAttendance', authenticateToken, async (req, res) => {
 app.post('/count', async (req, res) => {
   try {
     const { email } = req.body;
-    const count = await Attendence.countDocuments({ attendance: 'Present', email:email });
+    const count = await Attendence.countDocuments({ attendance: "Present", email:email });
     res.status(200).json( count );
     console.log(count)
   } catch (error) {
@@ -203,13 +204,18 @@ app.post('/count', async (req, res) => {
 app.post('/absent', async (req, res) => {
   try {
     const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ error: "Email is required" });
+    }
+
     const count = await Attendence.countDocuments({ attendance: 'Absent', email });
-    res.status(200).json(count );
+    res.status(200).json({ absentCount: count });
   } catch (error) {
     console.error("Error counting absent records:", error);
-    res.status(500).send("Error counting absent records: " + error.message);
+    res.status(500).json({ error: "Error counting absent records", details: error.message });
   }
 });
+
 app.delete('/deleteAttendence', async (req, res) => {
   const { email } = req.query; // Use req.query for DELETE parameters
   if (!email) {
@@ -226,6 +232,7 @@ app.delete('/deleteAttendence', async (req, res) => {
     res.status(500).send("Error deleting attendance: " + error.message);
   }
 });
+app.post('/api',SendLeave)
 app.delete('/deleteuser', async (req, res) => {
   const { email } = req.query;
 

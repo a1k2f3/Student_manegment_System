@@ -1,25 +1,23 @@
 import express from'express'
-import { Acount } from '../Controllers/mogoose_Setup.js';
+// import { Leave } from '../Controllers/mogoose_Setup.js';
+import { Leaves } from '../Controllers/Leave.js';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 const router = express.Router(); // Use express.Router() instead of express()
 router.use(cors());
 router.use(bodyParser.json());
-
-router.post('/Rigester',(req, res) => {
+router.post('/leave',(req, res) => {
   try {
-    const { name, email,contact,password,date_of_birth } = req.body;
-     Acount.create({
-       Name:name,
+    const {  email,subject,message } = req.body;
+     Leaves.create({
        Email:email,
-      phone:contact,
-       date_of_birth:date_of_birth,
-       passsword:password
+       subject:subject,
+      message:message,
     });
-    
     res.status(201).send("User created successfully");
   } catch (error) {
     res.status(500).send("Error creating user: " + error.message);
+    console.log(error)
   }
 });
 

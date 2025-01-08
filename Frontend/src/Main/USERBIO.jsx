@@ -5,10 +5,16 @@ const USERBIO = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [student, setStudent] = useState(null);
+  const [attendanceStats, setAttendanceStats] = useState({
+    totalCount: 0,
+    presentCount: 0,
+    leaveCount: 0,
+    absentCount: 0,
+  });
 
   useEffect(() => {
     const fetchStudentDetails = async () => {
-      const token = localStorage.getItem('authToken'); // Get token from localStorage
+      const token = localStorage.getItem('authToken');
 
       if (!token) {
         setError("No authentication token found");
@@ -19,37 +25,65 @@ const USERBIO = () => {
       try {
         const res = await axios.post(
           "http://localhost:3000/student",
-          {}, // No need to send email and password if token is used
+          {},
           {
             headers: {
-              Authorization:` Bearer ${token}`, // Pass the token in the Authorization header
+              Authorization: `Bearer ${token}`,
             },
           }
         );
 
-        console.log("Fetched Student Details:", res.data); // Log the fetched data
-        setStudent(res.data); // Store the response data in state
+        setStudent(res.data); // Store the student data
+        fetchAttendance(res.data.Email); // Call attendance API with student's email
       } catch (error) {
-        console.error("Error fetching student details:", error); // Log the error
-        setError('Error in fetching student details');
+        console.error("Error fetching student details:", error);
+        setError("Error in fetching student details");
+        setLoading(false);
+      }
+    };
+
+    const fetchAttendance = async (email) => {
+      try {
+        const token = localStorage.getItem('authToken');
+        const res = await axios.post(
+          'http://localhost:3000/seeAttendance',
+          { email },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const attendanceData = res.data;
+        const totalCount = attendanceData.length;
+        const presentCount = attendanceData.filter(record => record.status === 'Present').length;
+        const leaveCount = attendanceData.filter(record => record.status === 'leave').length;
+        const absentCount = attendanceData.filter(record => record.status === 'Absent').length;
+console.log("absent",absentCount)
+console.log(presentCount)
+        setAttendanceStats({ totalCount, presentCount, leaveCount, absentCount });
+      } catch (error) {
+        console.error('Error fetching attendance:', error);
+        setError('Error fetching attendance details. Please try again later.');
       } finally {
-        setLoading(false); // Stop the loading state
+        setLoading(false);
       }
     };
 
     fetchStudentDetails();
   }, []);
 
-  if (loading) return <div>Loading...</div>; // Loading state
-  if (error) return <div>{error}</div>; // Error state
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <div>
       <h1 className="text-lg">Academics</h1>
       <hr />
-      
-      {student ? ( // Check if student data is available
-        <div className="mt-10  flex  flex-wrap md:flex md:flex-wrap sm:flex sm:flex-wrap items-center">
+
+      {student ? (
+        <div className="mt-10 flex flex-wrap items-center">
           <img
             src={'https://cdn.fstoppers.com/styles/full/s3/media/2019/12/04/nando-jpeg-quality-001.jpg'}
             alt="Profile"
@@ -57,7 +91,7 @@ const USERBIO = () => {
           />
           <div className="flex flex-col mx-5">
             <span className="text-3xl font-medium subpixel-antialiased">
-              {student.Email} {/* Display student's email */}
+              {student.Email}
             </span>
           </div>
           <div className="flex flex-col mx-5">
@@ -68,18 +102,21 @@ const USERBIO = () => {
               Grade: {student.grade || 'N/A'}
             </span>
             <span className="text-lg text-slate-300 subpixel-antialiased">
-              Present: {student.present || 'N/A'}
+              Total Attendance: {attendanceStats.totalCount}
             </span>
             <span className="text-lg text-slate-300 subpixel-antialiased">
-              Leave: {student.leave || 'N/A'}
+              Present: {attendanceStats.presentCount}
             </span>
             <span className="text-lg text-slate-300 subpixel-antialiased">
-              Absent: {student.absent || 'N/A'}
+              Leave: {attendanceStats.leaveCount}
+            </span>
+            <span className="text-lg text-slate-300 subpixel-antialiased">
+              Absent: {attendanceStats.absentCount}
             </span>
           </div>
         </div>
       ) : (
-        <div>No student data available</div> // Show this if student data is not fetched
+        <div>No student data available</div>
       )}
     </div>
   );
