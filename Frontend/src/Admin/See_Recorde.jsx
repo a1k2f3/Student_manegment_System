@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+// import deleteuser from './component/Delete'
 const SeeRecord = () => {
   const [students, setStudents] = useState(); // Array for student details
   const [loading, setLoading] = useState(true); // Loading state
@@ -36,7 +36,38 @@ const SeeRecord = () => {
 
     fetchStudentDetails();
   }, []); // Empty dependency array to run the effect only once
+  const deleteuser = async (email) => {
+    setLoading(true);
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      alert('No authentication token found');
+      setLoading(false);
+      return;
+    }
 
+    try {
+      const response = await fetch(`http://localhost:3000/deleteuser?email=${email}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        const errorDetails = await response.json();
+        throw new Error(`Failed to delete user: ${errorDetails.message || response.statusText}`);
+      }
+
+      alert('User deleted successfully.');
+      setStudents((prev) => prev.filter((student) => student.Email !== email)); // Update UI by removing deleted student
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      alert('An error occurred while deleting the user. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
   if (loading) {
     return <div>Loading...</div>; // Show loading message while fetching data
   }
@@ -44,7 +75,7 @@ const SeeRecord = () => {
   if (error) {
     return <div>{error}</div>; // Display error message
   }
- 
+
   return (
     <main>
       <table className="min-w-full border-collapse border border-gray-300">
@@ -70,12 +101,13 @@ const SeeRecord = () => {
                 </button>
               </td>
               <td className='border border-gray-300'>
-                <button
-                  onClick={"hello"}
-                  className='bg-blue-500 text-white rounded-xl p-3'
+              <button
+                  onClick={() => deleteuser(student.Email)}
+                  className="bg-blue-500 text-white rounded-xl p-3"
                 >
-                  delete
+                  Delete
                 </button>
+
               </td>
 
             </tr>

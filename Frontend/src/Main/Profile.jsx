@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './Navbar';
 import axios from 'axios';
-
+import { useNavigate } from 'react-router-dom';
 const Profile = () => {
-  // const { email, password } = useStore();
-  // const [studentDetail, setStudentDetail] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [profile, setProfile] = useState("");
   const [isEditing, setIsEditing] = useState(false);
+  const navigate=useNavigate()
   useEffect(() => {
     const fetchStudentDetails = async () => {
       console.log("Fetching student details..."); // Debugging
@@ -28,17 +27,25 @@ const email=localStorage.getItem('email')
     fetchStudentDetails();
   }, [ ]);
 
-  const handleSubmit = () => {
-    setIsEditing(!isEditing);
+  const handleSubmit = async () => {
     if (isEditing) {
-      console.log("Profile changes saved:", profile); // Debug profile data
-      // Here you can add API call to save changes
+      try {
+        await axios.put(`http://localhost:3000/api/user/${profile._id}`,profile);
+        alert("Profile updated successfully");
+        navigate('/')
+
+      } catch (error) {
+        console.error("Error updating profile:", error);
+        alert("Failed to update profile. Please try again.");
+      }
     }
+    setIsEditing(!isEditing); // Toggle editing mode
   };
+  
 
   const handleChange = (e) => {
-    // const { name, value } = e.target;
-    // setProfile({ ...profile, [name]: value });
+    const { name, value } = e.target;
+    setProfile({ ...profile, [name]: value });
   };
 
   return (
@@ -89,7 +96,7 @@ const email=localStorage.getItem('email')
                   </label>
                   <input
                     type="text"
-                    name="name"
+                    name="Name"
                     value={profile.Name}
                     onChange={handleChange}
                     className="mt-1 block w-72 p-2 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
@@ -107,7 +114,7 @@ const email=localStorage.getItem('email')
                   </label>
                   <input
                     type="email"
-                    name="email"
+                    name="Email"
                     value={profile.Email}
                     onChange={handleChange}
                     className="mt-1 p-2 block w-72 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"

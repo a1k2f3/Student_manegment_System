@@ -8,6 +8,7 @@ import { Attendence } from './Controllers/attendence Setup.js';
 import attendence from './Module/Attendence.js'
 import leaveRoutes from './Module/Leaveapi.js'
 import userRoutes from './Module/Register.js'
+import update_user from './Module/updateprofile.js'
 import bodyParser from 'body-parser';
 import cors from 'cors';
 const app = express();
@@ -32,6 +33,7 @@ app.use('/api', userRoutes);
 app.use('/api',Auth_User)
 app.use('/api', leaveRoutes);
 app.use('/api', attendence);
+app.use('/api', update_user);
 app.post('/student', async (req, res) => {
   
   try {

@@ -74,7 +74,7 @@ const View = () => {
       attendance,
     };
     try {
-      const response = await axios.post('http://localhost:3000/attendance', values,{
+      const response = await axios.post('http://localhost:3000/api/attendance', values,{
         headers: {
           Authorization:` Bearer ${token}`, // Pass the token in the Authorization header
         },
