@@ -9,7 +9,7 @@ const router = express.Router();
 router.use(cors());
 router.use(bodyParser.json());
 
-router.post('/Register', async (req, res) => {
+router.post('/register', async (req, res) => {
   try {
     const { name, email, contact, date_of_birth, password } = req.body;
 

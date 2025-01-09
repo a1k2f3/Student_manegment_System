@@ -1,8 +1,8 @@
 // Import Dependencies
 import express from "express";
 import mongoose from "mongoose";
-import jwt from "jsonwebtoken";
-import bcrypt from "bcryptjs";
+import Auth_User from './Module/Login.js'
+
 import cors from "cors";
 import bodyParser from "body-parser";
 import { Acount } from './Controllers/mogoose_Setup.js';
@@ -29,47 +29,15 @@ async function connection_db() {
 }
 connection_db();
 
-// Routes
-
-// Welcome Route
 app.get("/", (req, res) => {
   res.send("Hello World");
 });
-
 // Registration Route
-app.post('/api', userRoutes);
+app.use('/api', userRoutes);
 // Login Route
-app.post('/login', async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const user = await Acount.findOne({ Email: email });
-     if (!user || !bcrypt.compare(password, user.password)) {
-      return res.status(400).send("Invalid email or password");
-    }
-
-    // Generate JWT token
-    const token = jwt.sign({ id: user._id, email: user.Email }, JWT_SECRET,
-       { expiresIn: '1h' });
-    
-    res.status(200).json({ message: "Login successful", token });
-  } catch (error) {
-    console.error("Login error:", error);
-    res.status(500).send("Error logging in: " + error.message);
-  }
-});
-
+app.use('/login',Auth_User)
 // JWT Middleware for Protected Routes
-function authenticateToken(req, res, next) {
-  const token = req.headers['authorization']?.split(" ")[1];
-  if (!token) return res.sendStatus(401);
-
-  jwt.verify(token, JWT_SECRET, (err, user) => {
-    if (err) return res.sendStatus(403);
-    req.user = user;
-    next();
-  });
-}
-
+import authenticateToken from "./jwt/Authtoken.js";
 // Mark Attendance Route (Protected)
 app.post('/attendance', authenticateToken, async (req, res) => {
   const{email}=req.body
@@ -224,7 +192,6 @@ app.delete('/deleteuser', async (req, res) => {
     if (!account) {
       return res.status(404).json({ message: 'Account record not found' });
     }
-
     res.status(200).json({ message: 'Account deleted successfully', account });
   } catch (error) {
     console.error("Error deleting account:", error);
