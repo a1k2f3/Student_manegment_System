@@ -103,15 +103,7 @@ const email=localStorage.getItem('email')
                   <label className="block text-sm font-medium text-gray-700">
                     Age
                   </label>
-                  <input
-                    type="number"
-                    name="age"
-                    value={profile.Age}
-                    onChange={handleChange}
-                    className="mt-1 block w-72 p-2 outline-none border-none rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    disabled={!isEditing}
-                  />
-                </div>
+                                 </div>
                 <div className="mt-6">
                   <label className="block text-sm font-medium text-gray-700">
                     Email
@@ -138,19 +130,7 @@ const email=localStorage.getItem('email')
                     disabled={!isEditing}
                   />
                 </div>
-                <div className="mt-6">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Date of Birth
-                  </label>
-                  <input
-                    type="date"
-                    name="dob"
-                    value={profile.dob}
-                    onChange={handleChange}
-                    className="mt-1 block w-72 p-2 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                    disabled={!isEditing}
-                  />
-                </div>
+                
               </div>
               <div className="mt-4">
                 <button
