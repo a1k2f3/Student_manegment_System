@@ -7,7 +7,8 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import { Acount } from './Controllers/mogoose_Setup.js';
 import { Attendence } from './Controllers/attendence Setup.js';
-import SendLeave from  './Module/Leaveapi.js'
+import leaveRoutes from './Module/Leaveapi.js'
+import userRoutes from './Module/Register.js'
 const app = express();
 const port = 3000;
 const JWT_SECRET = "your_jwt_secret_key"; // Replace with a strong secret key
@@ -36,30 +37,7 @@ app.get("/", (req, res) => {
 });
 
 // Registration Route
-app.post('/Register', async (req, res) => {
-  try {
-    const { name, email, contact, date_of_birth, password } = req.body;
-    const existingUser = await Acount.findOne({ Email: email });
-    if (existingUser) {
-      return res.status(400).send("User already exists. Please login.");
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    await Acount.create({
-      Name: name,
-      Email: email,
-      phone: contact,
-      date_of_birth,
-      password: hashedPassword,
-    });
-
-    res.status(201).send("User created successfully");
-  } catch (error) {
-    console.error("Error creating user:", error);
-    res.status(500).send("Error creating user: " + error.message);
-  }
-});
+app.post('/api', userRoutes);
 // Login Route
 app.post('/login', async (req, res) => {
   try {
@@ -232,7 +210,7 @@ app.delete('/deleteAttendence', async (req, res) => {
     res.status(500).send("Error deleting attendance: " + error.message);
   }
 });
-app.post('/api',SendLeave)
+app.use('/api', leaveRoutes);
 app.delete('/deleteuser', async (req, res) => {
   const { email } = req.query;
 

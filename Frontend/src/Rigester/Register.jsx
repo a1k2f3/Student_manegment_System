@@ -29,7 +29,7 @@ const Register = () => {
             name,email,contact,date_of_birth,password
         };
         try {
-            const response = await axios.post("http://localhost:3000/Register", values);
+            const response = await axios.post("http://localhost:3000/api/Register", values);
             console.log("Response:", response);
             alert("Welcome");
             navigate('/home');

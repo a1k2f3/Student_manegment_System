@@ -1,23 +1,25 @@
-import express from'express'
-// import { Leave } from '../Controllers/mogoose_Setup.js';
-import { Leaves } from '../Controllers/Leave.js';
-import cors from 'cors';
+import express from 'express';
 import bodyParser from 'body-parser';
-const router = express.Router(); // Use express.Router() instead of express()
+import cors from 'cors';
+import { Leaves } from '../Controllers/Leave.js';
+const router = express.Router();
 router.use(cors());
 router.use(bodyParser.json());
-router.post('/leave',(req, res) => {
+router.post('/leave', async (req, res) => {
   try {
-    const {  email,subject,message } = req.body;
-     Leaves.create({
-       Email:email,
-       subject:subject,
-      message:message,
+    const { email, subject, message } = req.body;
+
+    // Create a leave request in the database
+    await Leaves.create({
+      Email: email,
+      subject: subject,
+      message: message,
     });
-    res.status(201).send("User created successfully");
+
+    res.status(201).json({ message: 'Leave request created successfully' });
   } catch (error) {
-    res.status(500).send("Error creating user: " + error.message);
-    console.log(error)
+    console.error('Error creating leave request:', error);
+    res.status(500).json({ error: 'Error creating leave request', details: error.message });
   }
 });
 

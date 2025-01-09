@@ -1,6 +1,5 @@
 // Import Mongoose
 import mongoose from 'mongoose';
-
 const { Schema } = mongoose;
 const Signup = new Schema({
   Name: String, 
@@ -10,5 +9,4 @@ const Signup = new Schema({
   password:String,  
 
 });
-
  export const  Acount = mongoose.model('Acount', Signup);
