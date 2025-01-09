@@ -32,8 +32,6 @@ app.use('/api', userRoutes);
 app.use('/api',Auth_User)
 app.use('/api', leaveRoutes);
 app.use('/api', attendence);
-// Check if User Exists Route (Protected)
-// , authenticateToken
 app.post('/student', async (req, res) => {
   
   try {
@@ -167,7 +165,7 @@ app.delete('/deleteuser', async (req, res) => {
   }
 
   try {
-    const account = await Acount.findOneAndDelete({ email }); // Correct model name
+    const account = await Acount.findOneAndDelete({Email:email }); // Correct model name
 
     if (!account) {
       return res.status(404).json({ message: 'Account record not found' });

@@ -15,7 +15,8 @@ const USERBIO = () => {
   useEffect(() => {
     const fetchStudentDetails = async () => {
       const token = localStorage.getItem('authToken');
-
+      const email = localStorage.getItem('email')
+      const values = { email }
       if (!token) {
         setError("No authentication token found");
         setLoading(false);
@@ -25,7 +26,7 @@ const USERBIO = () => {
       try {
         const res = await axios.post(
           "http://localhost:3000/student",
-          {},
+          values,
           {
             headers: {
               Authorization: `Bearer ${token}`,

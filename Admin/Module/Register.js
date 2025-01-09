@@ -6,29 +6,28 @@ import { Acount } from '../Controllers/mogoose_Setup.js';
 const router = express.Router();
 router.use(cors());
 router.use(bodyParser.json());
-router.post('/register', async (req, res) => {
+router.put('/update-profile/:userId', async (req, res) => {
+  const { userId } = req.params;
+  const { name, email, phone,  } = req.body;
+
   try {
-    const { name, email, contact, date_of_birth, password } = req.body;
-
-    // Check if the user already exists
-    const existingUser = await Acount.findOne({ Email: email });
-    if (existingUser) {
-      return res.status(400).json({ message: "User already exists. Please login." });
+    // Find the user by ID and update the profile
+    const user = await Acount.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
     }
-    const hashedPassword = await bcrypt.hash(password, 10);
-    // Create a new user in the database
-    await Acount.create({
-      Name: name,
-      Email: email,
-      phone: contact,
-      date_of_birth,
-      password: hashedPassword,
-    });
 
-    res.status(201).json({ message: "User created successfully" });
-  } catch (error) {
-    console.error("Error creating user:", error);
-    res.status(500).json({ error: "Error creating user", details: error.message });
+    // Update user fields
+    if (name) user.Name = name;
+    if (email) user.Email = email;
+    if (phone) user.phone = phone;
+    // Save updated user
+    await user.save();
+
+    res.status(200).json({ message: 'Profile updated successfully', user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error updating profile' });
   }
 });
 export default router;

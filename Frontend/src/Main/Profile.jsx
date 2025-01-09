@@ -7,11 +7,9 @@ const Profile = () => {
   // const [studentDetail, setStudentDetail] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [profile, setProfile] = useState([]);
-
+  const [profile, setProfile] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   useEffect(() => {
-    
     const fetchStudentDetails = async () => {
       console.log("Fetching student details..."); // Debugging
 const email=localStorage.getItem('email')
@@ -20,7 +18,6 @@ const email=localStorage.getItem('email')
         const res = await axios.post('http://localhost:3000/student', values);
         console.log("API response:", res.data); // Debugging API response
                setProfile(res.data)
-
       } catch (error) {
         console.error("Error in fetching student details:", error); // Log error
         setError('Error in fetching student details');
@@ -40,8 +37,8 @@ const email=localStorage.getItem('email')
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setProfile({ ...profile, [name]: value });
+    // const { name, value } = e.target;
+    // setProfile({ ...profile, [name]: value });
   };
 
   return (
