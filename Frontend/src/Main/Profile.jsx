@@ -1,52 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './Navbar';
 import axios from 'axios';
-import useStore from '../Context/Usercontext';
 
 const Profile = () => {
   // const { email, password } = useStore();
   // const [studentDetail, setStudentDetail] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const [profile, setProfile] = useState({
-    name: '',
-    age: 28,
-    email: '',
-    phone: '123-456-7890',
-    dob: '1995-06-15',
-    image: 'https://via.placeholder.com/150',
-  });
+  const [profile, setProfile] = useState([]);
 
   const [isEditing, setIsEditing] = useState(false);
-
   useEffect(() => {
-    // console.log("useEffect triggered, email:", email, "password:", password); // Debugging
-
-    // if (!email || !password) {
-    //   setError('Email or password is missing.');
-    //   setLoading(false);
-    //   return;
-    // }
-
+    
     const fetchStudentDetails = async () => {
       console.log("Fetching student details..."); // Debugging
+const email=localStorage.getItem('email')
+      try {
+        const values = { email };
+        const res = await axios.post('http://localhost:3000/student', values);
+        console.log("API response:", res.data); // Debugging API response
+               setProfile(res.data)
 
-      // try {
-      //   // const values = { email, password };
-      //   const res = await axios.post('http://localhost:3000/student', values);
-      //   console.log("API response:", res.data); // Debugging API response
-
-      //   // setStudentDetail(res.data);
-
-      // } catch (error) {
-      //   console.error("Error in fetching student details:", error); // Log error
-      //   setError('Error in fetching student details');
-      // } finally {
-      //   setLoading(false);
-      // }
+      } catch (error) {
+        console.error("Error in fetching student details:", error); // Log error
+        setError('Error in fetching student details');
+      } finally {
+        setLoading(false);
+      }
     };
-
     fetchStudentDetails();
   }, [ ]);
 
@@ -63,20 +44,6 @@ const Profile = () => {
     setProfile({ ...profile, [name]: value });
   };
 
-  const changeImage = (e) => {
-    const file = e.target.files[0];
-    const reader = new FileReader();
-    reader.onload = () => {
-      setProfile({ ...profile, image: reader.result });
-    };
-    if (file) {
-      reader.readAsDataURL(file);
-    }
-  };
-
-  // if (loading) return <div>Loading...</div>;
-  // if (error) return <div>{error}</div>;
-
   return (
     <>
       <Navbar />
@@ -92,7 +59,7 @@ const Profile = () => {
               <input
                 type="file"
                 accept="image/*"
-                onChange={changeImage}
+                // onChange={changeImage}
                 className={`block w-60 h-10 text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 mb-2 ${
                   !isEditing ? 'opacity-0' : 'opacity-1'
                 }`}
@@ -100,10 +67,17 @@ const Profile = () => {
               />
               <div className="flex flex-col mx-5">
                 <span className="text-1xl font-medium subpixel-antialiased">
-                  {profile.name}
+                  {profile.Name}
                 </span>
                 <span className="text-lg text-slate-300 subpixel-antialiased">
-                  {profile.email}
+                  {profile.Email}
+                </span>
+                <span className="text-lg text-slate-300 subpixel-antialiased">
+                  {profile.date_of_birth}
+                </span>
+                
+                <span className="text-lg text-slate-300 subpixel-antialiased">
+                  {profile.phone}
                 </span>
                 <span className="text-lg text-slate-300 subpixel-antialiased">
                   Student
@@ -119,7 +93,7 @@ const Profile = () => {
                   <input
                     type="text"
                     name="name"
-                    value={profile.name}
+                    value={profile.Name}
                     onChange={handleChange}
                     className="mt-1 block w-72 p-2 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     disabled={!isEditing}
@@ -132,7 +106,7 @@ const Profile = () => {
                   <input
                     type="number"
                     name="age"
-                    value={profile.age}
+                    value={profile.Age}
                     onChange={handleChange}
                     className="mt-1 block w-72 p-2 outline-none border-none rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     disabled={!isEditing}
@@ -145,7 +119,7 @@ const Profile = () => {
                   <input
                     type="email"
                     name="email"
-                    value={profile.email}
+                    value={profile.Email}
                     onChange={handleChange}
                     className="mt-1 p-2 block w-72 border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     disabled={!isEditing}

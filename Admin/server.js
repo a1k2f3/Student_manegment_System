@@ -33,9 +33,12 @@ app.use('/api',Auth_User)
 app.use('/api', leaveRoutes);
 app.use('/api', attendence);
 // Check if User Exists Route (Protected)
-app.post('/student', authenticateToken, async (req, res) => {
+// , authenticateToken
+app.post('/student', async (req, res) => {
+  
   try {
-    const user = await Acount.findOne({ Email: req.user.email });
+    const { email } = req.body;
+    const user = await Acount.findOne({ Email: email});
     if (user) {
       res.status(200).json(user);
     } else {

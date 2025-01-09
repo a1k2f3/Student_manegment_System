@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import Navbar from '../Main/Navbar';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 const Leave = () => {
     const [subject, setSubject] = useState('');
     const [text, setText] = useState('');
+    const navigate=useNavigate()
     
     const handleSubject = (e) => setSubject(e.target.value);
     const handleText = (e) => setText(e.target.value);
@@ -16,7 +18,6 @@ const Leave = () => {
             const response = await axios.post("http://localhost:3000/api/leave", values);
             console.log("Response:", response.data);
             alert("Leave sent successfully");
-            alert("hjkh")
             navigate('/home');
             if (response.status===200) {
                 alert("Leave sent successfully");

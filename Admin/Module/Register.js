@@ -3,12 +3,9 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import bcrypt from 'bcryptjs'; // Ensure bcrypt is imported
 import { Acount } from '../Controllers/mogoose_Setup.js';
-
 const router = express.Router();
-
 router.use(cors());
 router.use(bodyParser.json());
-
 router.post('/register', async (req, res) => {
   try {
     const { name, email, contact, date_of_birth, password } = req.body;
