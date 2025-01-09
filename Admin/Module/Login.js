@@ -3,9 +3,11 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import jwt from "jsonwebtoken";
 import { Acount } from '../Controllers/mogoose_Setup.js';
+import bcrypt from 'bcryptjs'
 const router = express.Router();
 router.use(cors());
 router.use(bodyParser.json());
+const JWT_SECRET = "your_jwt_secret_key"
 router.post('/login', async (req, res) => {
     try {
       const { email, password } = req.body;

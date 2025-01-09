@@ -57,10 +57,11 @@ const navigate=useNavigate()
 
  const handleAttendence = async () => {
     const token = localStorage.getItem('authToken'); // Get the token for the attendance submission
+    const email = localStorage.getItem('email'); // Get the token for the attendance submission
 console.log("token",token)
     try {
-      const response = await axios.post("http://localhost:3000/attendance", {
-        attendance 
+      const response = await axios.post("http://localhost:3000/api/attendance", {
+        attendance ,email
       },{
         headers: {
           Authorization: `Bearer ${token}` // Pass token in the Authorization header

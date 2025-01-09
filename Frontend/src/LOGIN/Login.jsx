@@ -22,12 +22,13 @@ const Login = () => {
 
         const values = { email, password };
         try {
-            const response = await axios.post("http://localhost:3000/login", values);
+            const response = await axios.post("http://localhost:3000/api/login", values);
             console.log("Response:", response.data); // Log the full response for inspection
             const { token } = response.data;
         
             if (token) {
                 localStorage.setItem('authToken', token);
+                localStorage.setItem('email',email)
                 navigate('/home');
             } else {
                 setErrorMessage(response.data.message || "Invalid credentials, please try again.");

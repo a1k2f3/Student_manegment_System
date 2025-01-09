@@ -1,24 +1,19 @@
 // Import Dependencies
 import express from "express";
 import mongoose from "mongoose";
+import { Acount } from './Controllers/mogoose_Setup.js'
+import authenticateToken from "./jwt/Authtoken.js";
 import Auth_User from './Module/Login.js'
-
-import cors from "cors";
-import bodyParser from "body-parser";
-import { Acount } from './Controllers/mogoose_Setup.js';
 import { Attendence } from './Controllers/attendence Setup.js';
+import attendence from './Module/Attendence.js'
 import leaveRoutes from './Module/Leaveapi.js'
 import userRoutes from './Module/Register.js'
+import bodyParser from 'body-parser';
+import cors from 'cors';
 const app = express();
 const port = 3000;
-const JWT_SECRET = "your_jwt_secret_key"; // Replace with a strong secret key
-// const JWT_SECRET2 = "your_jwt_secret_key"; // Replace with a strong secret key
-
 app.use(cors());
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-
-// Database Connection
 async function connection_db() {
   try {
     await mongoose.connect("mongodb://localhost:27017/System");
@@ -34,38 +29,9 @@ app.get("/", (req, res) => {
 });
 // Registration Route
 app.use('/api', userRoutes);
-// Login Route
-app.use('/login',Auth_User)
-// JWT Middleware for Protected Routes
-import authenticateToken from "./jwt/Authtoken.js";
-// Mark Attendance Route (Protected)
-app.post('/attendance', authenticateToken, async (req, res) => {
-  const{email}=req.body
-  if(email)
-  {
-    try {
-      const { attendance } = req.body;
-  console.log(attendance)
-     let Attendance= await Attendence.create({ attendence:attendance, email:email });
-      res.status(201).json(Attendance);
-    } catch (error) {
-      console.error("Error marking attendance:", error);
-      res.status(500).send("Error marking attendance: " + error.message);
-    }   
-  }
-  else{
-  try {
-    const { attendance } = req.body;
-    const email = req.user.email;
-console.log(attendance)
-   let Attendance= await Attendence.create({ attendence:attendance, email:email });
-    res.status(201).json(Attendance);
-  } catch (error) {
-    console.error("Error marking attendance:", error);
-    res.status(500).send("Error marking attendance: " + error.message);
-  }
-}});
-
+app.use('/api',Auth_User)
+app.use('/api', leaveRoutes);
+app.use('/api', attendence);
 // Check if User Exists Route (Protected)
 app.post('/student', authenticateToken, async (req, res) => {
   try {
@@ -137,14 +103,25 @@ app.post('/seeAttendance', authenticateToken, async (req, res) => {
 app.post('/count', async (req, res) => {
   try {
     const { email } = req.body;
-    const count = await Attendence.countDocuments({ attendance: "Present", email:email });
-    res.status(200).json( count );
-    console.log(count)
+
+    // Check if email is provided
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    // Count the number of 'Present' attendance records for the given email
+    const count = await Attendence.countDocuments({ attendance: "Present", email: email });
+
+    // Return the count in a structured response
+    res.status(200).json({ message: "Attendance count retrieved successfully", count: count });
+
+    console.log(`Attendance count for ${email}:`, count);
   } catch (error) {
     console.error("Error counting attendance:", error);
-    res.status(500).send("Error counting attendance: " + error.message);
+    res.status(500).json({ message: "Error counting attendance", error: error.message });
   }
 });
+
 
 // Count Absent Records (Protected)
 app.post('/absent', async (req, res) => {
@@ -178,7 +155,7 @@ app.delete('/deleteAttendence', async (req, res) => {
     res.status(500).send("Error deleting attendance: " + error.message);
   }
 });
-app.use('/api', leaveRoutes);
+
 app.delete('/deleteuser', async (req, res) => {
   const { email } = req.query;
 
