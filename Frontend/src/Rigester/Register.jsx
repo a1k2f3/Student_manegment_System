@@ -50,6 +50,9 @@ const Register = () => {
         <>
             <Navbar2 />
             <div className="mt-10 w-96 flex flex-col justify-center items-center rounded-xl h-100 overflow mx-auto shadow-lg">
+                <div>
+
+                
                 <h1 className="text-3xl mt-0 font-bold">Sign-up</h1>
                 <div>
                     <input type="text" placeholder='Enter your name' value={name} onChange={handleName} className='w-60 p-2 border-2 border-black rounded-lg my-2 ' />
@@ -72,6 +75,7 @@ const Register = () => {
                 <div>
                     <button className='max-w-96 px-10 py-2 bg-green-600 rounded-lg hover:bg-green-300 text-xl text-white' onClick={handleSubmit}>Register</button>
                 </div>
+            </div>
             </div>
         </>
     );
