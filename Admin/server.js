@@ -133,7 +133,6 @@ app.post('/absent', async (req, res) => {
     if (!email) {
       return res.status(400).json({ error: "Email is required" });
     }
-
     const count = await Attendence.countDocuments({ attendance: 'Absent', email });
     res.status(200).json({ absentCount: count });
   } catch (error) {
@@ -158,7 +157,6 @@ app.delete('/deleteAttendence', async (req, res) => {
     res.status(500).send("Error deleting attendance: " + error.message);
   }
 });
-
 app.delete('/deleteuser', async (req, res) => {
   const { email } = req.query;
 
