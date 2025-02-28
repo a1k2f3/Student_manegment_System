@@ -40,7 +40,7 @@ const Start = () => {
                 alt="Student Dashboard"
                 className="aspect-video overflow-hidden rounded-xl object-cover object-center shadow-xl"
                 height="550"
-                src="/placeholder.svg?height=550&width=800"
+                src="https://smart-school.in/assets/article-media/dashboard1.png"
                 width="800"
               />
             </div>
